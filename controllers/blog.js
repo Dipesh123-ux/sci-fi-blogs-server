@@ -47,6 +47,12 @@ exports.create = (req, res) => {
       });
     }
 
+    if(!files || !files.photo){
+      return res.status(400).json({
+        error: "featured Image required",
+      });
+    }
+
     let blog = new Blog();
     blog.title = title;
     blog.body = body;
