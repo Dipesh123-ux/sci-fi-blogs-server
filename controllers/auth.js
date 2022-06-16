@@ -36,7 +36,7 @@ exports.preSignUp = (req, res)=>{
                 subject: 'Account Activation Link',
                 html: `<h2>Welcome to sci-fi-blogs</h2>
                         <h4>Use this link to verify your email</h4>
-                        <a href="http://locahost:3000/auth/account/activate/${token}" >account activation link</a>
+                        <a href="http://localhost:3000/auth/account/activate/${token}" >account activation link</a>
                         <br />
                         <h4>Have a great blogging experience</h4>
                      `,
