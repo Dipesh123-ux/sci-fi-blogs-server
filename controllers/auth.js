@@ -40,7 +40,7 @@ exports.preSignUp = (req, res)=>{
                 subject: 'Account Activation Link',
                 html: `<h2>Welcome to sci-fi-blogs</h2>
                         <h4>Use this link to verify your email</h4>
-                        <a href="http://localhost:3000/auth/account/activate/${token}" >account activation link</a>
+                        <a href="https://sci-fi-blogs.vercel.app/auth/account/activate/${token}" >account activation link</a>
                         <br />
                         <h4>Have a great blogging experience</h4>
                      `,
@@ -241,7 +241,7 @@ exports.forgotPassword = (req, res) => {
                     from: process.env.USER,
                     to: email,
                     subject: 'Password Reset Link',
-                    html: ` <p>http://localhost:3000/auth/password/reset/${token}</p>
+                    html: ` <a href="https://sci-fi-blogs.vercel.app/auth/password/reset/${token}">Password reset link</a>
                             <hr/>
                             <p>This email may contain sensetive information</p>
                          `,
