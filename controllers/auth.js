@@ -60,7 +60,7 @@ exports.preSignUp = (req, res)=>{
 }
 
 
-exports.signup = (req, res) => {
+exports.signUp = (req, res) => {
     const token = req.body.token;
     if (token) {
         jwt.verify(token, process.env.JWT_SIGNUP_SECRET, function(err, decoded) {
