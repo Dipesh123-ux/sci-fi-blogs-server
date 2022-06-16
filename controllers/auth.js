@@ -7,6 +7,11 @@ const _ = require('lodash');
 const nodemailer = require('nodemailer')
 // const {OAuth2Client} = require('google-auth-library')
 
+
+
+
+
+
 exports.preSignUp = (req, res)=>{
     const {name,email,password} = req.body 
     User.findOne({email : email.toLowerCase()},(err,user)=>{
@@ -17,21 +22,20 @@ exports.preSignUp = (req, res)=>{
         }
 
         const token  = jwt.sign({name,email,password},process.env.JWT_SIGNUP_SECRET,{expiresIn  :"10m"})
-       
-  
-              const transporter = nodemailer.createTransport({
-                service: 'hotmail',
-                auth: {
-                  user: process.env.USER,
-                  pass : process.env.PASS,
-                },
-                tls:{
-                    rejectUnauthorized : false
-                }
-              });
-          
+        
+        const transporter = nodemailer.createTransport({
+            service: 'hotmail',
+            auth: {
+              user: process.env.USER,
+              pass : process.env.PASS,
+            },
+            tls:{
+                rejectUnauthorized : false
+            }
+          });
+
                transporter.sendMail({
-                from: 'scifiblogs@outlook.com',
+                from: process.env.USER,
                 to: email,
                 subject: 'Account Activation Link',
                 html: `<h2>Welcome to sci-fi-blogs</h2>
@@ -201,6 +205,102 @@ exports.canUpdateDeleteBlog = (req, res, next) => {
     });
 };
 
+
+exports.forgotPassword = (req, res) => {
+    const { email } = req.body;
+
+    User.findOne({ email }, (err, user) => {
+        if (err || !user) {
+            return res.status(401).json({
+                error: 'User with that email does not exist'
+            });
+        }
+
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_RESET_PASSWORD, { expiresIn: '10m' });
+
+        // email
+        // populating the db > user > resetPasswordLink
+
+
+      
+        return user.updateOne({ resetPasswordLink: token }, (err, success) => {
+            if (err) {
+                return res.json({ error: errorHandler(err) });
+            } else {
+                   const transporter = nodemailer.createTransport({
+            service: 'hotmail',
+            auth: {
+              user: process.env.USER,
+              pass : process.env.PASS,
+            },
+            tls:{
+                rejectUnauthorized : false
+            }
+          });
+                transporter.sendMail({
+                    from: process.env.USER,
+                    to: email,
+                    subject: 'Password Reset Link',
+                    html: ` <p>http://localhost:3000/auth/password/reset/${token}</p>
+                            <hr/>
+                            <p>This email may contain sensetive information</p>
+                         `,
+                  })
+                  .then(()=>{
+                    return res.status(200).json({
+                        message : `Email has been sent to ${email}. Follow the instructions to activate your account`
+                    })
+                  })
+                  .catch( (error) =>{
+    
+                  console.log(error);
+                  return res.status(400).json({
+                    error : 'email not sent'
+                  })
+                }
+                  );
+            }
+        });
+    });
+};
+
+exports.resetPassword = (req, res) => {
+    const { resetPasswordLink, newPassword } = req.body;
+
+    if (resetPasswordLink) {
+        jwt.verify(resetPasswordLink, process.env.JWT_RESET_PASSWORD, function(err, decoded) {
+            if (err) {
+                return res.status(401).json({
+                    error: 'Expired link. Try again'
+                });
+            }
+            User.findOne({ resetPasswordLink }, (err, user) => {
+                if (err || !user) {
+                    return res.status(401).json({
+                        error: 'Something went wrong. Try later'
+                    });
+                }
+                const updatedFields = {
+                    password: newPassword,
+                    resetPasswordLink: ''
+                };
+
+                user = _.extend(user, updatedFields);
+
+                user.save((err, result) => {
+                    if (err) {
+                        return res.status(400).json({
+                            error: errorHandler(err)
+                        });
+                    }
+                    return res.json({
+                        message: `Great! Now you can login with your new password`
+                    });
+                });
+            });
+        });
+    }
+};
 // const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 // exports.googleLogin = (req,res,next)=>{
