@@ -4,9 +4,60 @@ const jwt = require('jsonwebtoken');
 const expressJwt = require('express-jwt')
 const Blog = require("../models/blog")
 const _ = require('lodash');
+const nodemailer = require('nodemailer')
 // const {OAuth2Client} = require('google-auth-library')
 
+exports.preSignUp = (req, res)=>{
+    const {name,email,password} = req.body 
+    User.findOne({email : email.toLowerCase()},(err,user)=>{
+        if(user){
+            return res.status(400).json({
+                error : "user with that email already exist"
+            })
+        }
 
+        const token  = jwt.sign({name,email,password},process.env.JWT_SIGNUP_SECRET,{expiresIn  :"10m"})
+       
+  
+              const transporter = nodemailer.createTransport({
+                service: 'hotmail',
+                auth: {
+                  user: process.env.USER,
+                  pass : process.env.PASS,
+                },
+                tls:{
+                    rejectUnauthorized : false
+                }
+              });
+          
+               transporter.sendMail({
+                from: 'scifiblogs@outlook.com',
+                to: email,
+                subject: 'Account Activation Link',
+                html: `<h2>Welcome to sci-fi-blogs</h2>
+                        <h4>Use this link to verify your email</h4>
+                        <a href="http://locahost:3000/auth/account/activate/${token}" >account activation link</a>
+                        <br />
+                        <h4>Have a great blogging experience</h4>
+                     `,
+              })
+              .then(()=>{
+                return res.status(200).json({
+                    message : `Email has been sent to ${email}. Follow the instructions to activate your account`
+                })
+              })
+              .catch( (error) =>{
+
+              console.log(error);
+              return res.status(400).json({
+                error : 'email not sent'
+              })
+            }
+              );
+
+
+    })
+}
 
 
 exports.signUp = (req,res,next) => {
