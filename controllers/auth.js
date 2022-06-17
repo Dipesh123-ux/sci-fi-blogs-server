@@ -77,7 +77,7 @@ exports.signUp = (req, res) => {
             const { name, email, password } = jwt.decode(token);
 
             let username = shortId.generate();
-            let profile = `${process.env.CLIENT_URL}/profile/${username}`;
+            let profile = `https://sci-fi-blogs.vercel.app/profile/${username}`;
 
             const user = new User({ name, email, password, profile, username });
             user.save((err, user) => {
