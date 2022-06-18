@@ -23,6 +23,8 @@ router.put('/forgot-password', forgotPasswordValidator, runValidation, authContr
 router.put('/reset-password', resetPasswordValidator, runValidation, authController.resetPassword);
 
 
+router.post('/google-login', authController.googleLogin);
+
 
 
 module.exports = router;
