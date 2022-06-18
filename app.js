@@ -12,9 +12,6 @@ const userRoutes = require('./routes/user');
 const categoryRoutes = require('./routes/category')
 const tagRoutes =  require('./routes/tag')
 
-
-
-
 const app = express();
 
 app.use(cors())

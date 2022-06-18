@@ -301,11 +301,11 @@ exports.resetPassword = (req, res) => {
         });
     }
 };
-const client = new OAuth2Client(process.env.GOOGLE_ID )
+const client = new OAuth2Client('505114108732-vnpj8g2aarqjdb5pado5u03661n7b3n2.apps.googleusercontent.com' )
 
 exports.googleLogin = (req,res,next)=>{
     const idToken = req.body.token;
-    client.verifyIdToken({ idToken, audience:process.env.GOOGLE_ID }).then(response => {
+    client.verifyIdToken({ idToken, audience:'505114108732-vnpj8g2aarqjdb5pado5u03661n7b3n2.apps.googleusercontent.com' }).then(response => {
         // console.log(response)
         const { email_verified, name, email, jti } = response.payload;
         if (email_verified) {
