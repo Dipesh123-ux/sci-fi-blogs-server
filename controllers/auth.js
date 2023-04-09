@@ -40,7 +40,7 @@ exports.preSignUp = (req, res)=>{
                 subject: 'Account Activation Link',
                 html: `<h2>Welcome to sci-fi-blogs</h2>
                         <h4>Use this link to verify your email</h4>
-                        <a href="https://sci-fi-blogs.vercel.app/auth/account/activate/${token}" >account activation link</a>
+                        <a href="https://sci-fi-blogss.vercel.app/auth/account/activate/${token}" >account activation link</a>
                         <br />
                         <h4>Have a great blogging experience</h4>
                      `,
@@ -77,7 +77,7 @@ exports.signUp = (req, res) => {
             const { name, email, password } = jwt.decode(token);
 
             let username = shortId.generate();
-            let profile = `https://sci-fi-blogs.vercel.app/profile/${username}`;
+            let profile = `https://sci-fi-blogss.vercel.app/profile/${username}`;
 
             const user = new User({ name, email, password, profile, username });
             user.save((err, user) => {
@@ -241,7 +241,7 @@ exports.forgotPassword = (req, res) => {
                     from: process.env.USER,
                     to: email,
                     subject: 'Password Reset Link',
-                    html: ` <a href="https://sci-fi-blogs.vercel.app/auth/password/reset/${token}">Password reset link</a>
+                    html: ` <a href="https://sci-fi-blogss.vercel.app/auth/password/reset/${token}">Password reset link</a>
                             <hr/>
                             <p>This email may contain sensetive information</p>
                          `,
@@ -318,7 +318,7 @@ exports.googleLogin = (req,res,next)=>{
                     return res.json({ token, user: { _id, email, name, role, username } });
                 } else {
                     let username = shortId.generate();
-                    let profile = `https://sci-fi-blogs.vercel.app/profile/${username}`;
+                    let profile = `https://sci-fi-blogss.vercel.app/profile/${username}`;
                     let password = jti;
                     user = new User({ name, email, profile, username, password });
                     user.save((err, data) => {
